@@ -18,7 +18,7 @@
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
                 <h1 class="text-center mb-4">Inscription</h1>
-                <form action="process_register.php" method="POST">
+                <form action="../php/register.php" method="POST">
                     
                     <!-- Champ pour le nom -->
                     <div class="mb-3">
@@ -44,12 +44,21 @@
                     <!-- Champ pour l'adresse e-mail -->
                     <div class="mb-3">
                         <label class="form-label">Adresse e-mail</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Entrez votre e-mail" required>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Entrez votre e-mail" oninput="validateEmails()" required>
                         <div class="invalid-feedback">
                             Veuillez entrer une adresse e-mail valide (avec un "@" et un ".").
                         </div>
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Confirmez votre adresse e-mail</label>
+                        <input type="email" class="form-control" id="confirmEmail" name="email" oninput="validateEmails()" required>
+                        <div class="invalid-feedback">
+                            Veuillez entrer une adresse e-mail valide (avec un "@" et un ".").
+                        </div>
+                    </div>
+
+                 
                     <!-- Champ pour le mot de passe -->
                     <div class="mb-3">
                         <label class="form-label">Mot de passe</label>
@@ -58,8 +67,22 @@
 
                     <!-- Bouton d'inscription -->
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">S'inscrire</button>
+                        <button type="submit" id="bouton" class="btn btn-primary">S'inscrire</button>
                     </div>
+
+                    <script>
+                        function validateEmails() {
+                            var email = document.getElementById('email').value;
+                            var confirmEmail = document.getElementById('confirmEmail').value;
+                            var button = document.getElementById('bouton');
+
+                            if (email === confirmEmail && email !== '') {
+                                button.disabled = false; // Active le bouton si les emails correspondent
+                            } else {
+                                button.disabled = true; // Désactive le bouton si les emails ne correspondent pas
+                            }
+                        }
+                    </script>
 
                     <!-- Lien de connexion -->
                     <div class="text-center mt-3">
