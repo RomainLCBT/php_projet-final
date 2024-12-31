@@ -18,7 +18,7 @@
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
                 <h1 class="text-center mb-4">Connexion</h1>
-                <form action="process_login.php" method="POST">
+                <form action="../php/process_login.php" method="POST">
 
                     <!-- Champ pour l'email -->
                     <div class="mb-3">
@@ -44,7 +44,7 @@
                         <button type="submit" class="btn btn-primary">Se connecter</button>
                     </div>
                     <div>
-                        <input type="checkbox" id="scales" name="scales">
+                        <input type="checkbox" id="rester_co" name="rester_co">
                         <label>Restez connecté</label>
                     </div>
 
