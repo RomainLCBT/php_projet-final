@@ -33,7 +33,7 @@ if ($email_exists > 0) {
 $sql = "INSERT INTO Client (nom, prenom, telephone, adresse_mail, mot_de_passe)
         VALUES (:nom, :prenom, :telephone, :email, :password)";
 
-try{
+try {
     $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
@@ -46,10 +46,6 @@ try{
 
     header("Location: ../site/rendezvous.php");
     exit;
-
-}   
-catch (PDOException $e) {
+} catch (PDOException $e) {
     echo "Erreur lors de l'inscription : " . $e->getMessage();
 }
-?>
-

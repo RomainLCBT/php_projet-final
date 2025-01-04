@@ -30,8 +30,8 @@ if (!$user) {
     exit;
 }
 
-if ($password === $user['mot_de_passe']){
-    
+if ($password === $user['mot_de_passe']) {
+
     session_start();
     $_SESSION['id_client'] = $user['id_client'];
     $_SESSION['email'] = $email;
@@ -40,15 +40,10 @@ if ($password === $user['mot_de_passe']){
         $token = $user['id_client'];
         setcookie("remember_token", $token, time() + (86400 * 30), "/");  // 30 jours
     }
-    
-    header("Location: ../site/rendezvous.php");  
-    exit;
-} 
 
-else {
+    header("Location: ../site/rendezvous.php");
+    exit;
+} else {
     echo "Mot de passe incorrect.";
     exit;
 }
-
-
-?>
