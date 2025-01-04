@@ -27,7 +27,7 @@ if (!isset($_SESSION['id_client'])) {
     }
 }
 
-// Connexion à la base de données
+
 include_once('../php/database.php');
 $pdo = dbConnect();
 if (!$pdo) {
@@ -35,20 +35,20 @@ if (!$pdo) {
     exit;
 }
 
-// Gestion de la prise de rendez-vous
+
 if (isset($_POST['prendre_rendez_vous'])) {
     $id_dispo = $_POST['id_dispo'];
     $id_medecin = $_POST['id_medecin'];
     $id_client = $_SESSION['id_client'];
 
-    // Récupérer la disponibilité
+
     $sql = "SELECT * FROM disponibilite WHERE id_dispo = :id_dispo AND is_dispo = TRUE";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':id_dispo' => $id_dispo]);
     $dispo = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($dispo) {
-        // Insérer le rendez-vous
+
         $sql = "INSERT INTO RendezVous (date, heure, est_passe, duree, id_client, id_medecin, id_etablissement, id_dispo)
                 VALUES (:date, :heure, FALSE, '01:00:00', :id_client, :id_medecin, :id_etablissement, :id_dispo)";
         $stmt = $pdo->prepare($sql);
@@ -61,7 +61,7 @@ if (isset($_POST['prendre_rendez_vous'])) {
             ':id_dispo' => $id_dispo
         ]);
 
-        // Marquer la disponibilité comme prise
+
         $sql = "UPDATE disponibilite SET is_dispo = FALSE WHERE id_dispo = :id_dispo";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id_dispo' => $id_dispo]);
@@ -107,7 +107,7 @@ if (isset($_GET['search'])) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
-                echo "<p>Bienvenue " . htmlspecialchars($user['nom']) . " " . htmlspecialchars($user['prenom']) . "</p>";
+                echo "<p>Bienvenue " . $user['nom'] . " " . $user['prenom'] . "</p>";
             }
         }
         ?>
@@ -121,7 +121,7 @@ if (isset($_GET['search'])) {
 
         <form method="GET" action="">
             <div class="input-group w-50 mx-auto">
-                <input type="text" class="form-control" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>" placeholder="Recherchez le nom d'un médecin, une spécialité ou un établissement">
+                <input type="text" class="form-control" name="search" value="<?php echo $searchTerm; ?>" placeholder="Recherchez le nom d'un médecin, une spécialité ou un établissement">
                 <button class="btn btn-success" type="submit">Rechercher</button>
             </div>
         </form>
@@ -147,15 +147,15 @@ if (isset($_GET['search'])) {
                     foreach ($disponibilites as $dispo) {
                         echo '<div class="card mb-4">
                             <div class="card-body">
-                                <h5 class="card-title">' . htmlspecialchars($dispo['med_nom']) . ' ' . htmlspecialchars($dispo['med_prenom']) . '</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">' . htmlspecialchars($dispo['spe_nom']) . '</h6>
-                                <p class="card-text">Établissement: ' . htmlspecialchars($dispo['etab_nom']) . '<br>
-                                Adresse: ' . htmlspecialchars($dispo['etab_adresse']) . ', ' . htmlspecialchars($dispo['etab_ville']) . '</p>
-                                <p>Disponibilité: ' . htmlspecialchars($dispo['debut_periode']) . ' à ' . htmlspecialchars($dispo['fin_periode']) . ' de ' . htmlspecialchars($dispo['debut_heure']) . ' à ' . htmlspecialchars($dispo['fin_heure']) . '</p>
+                                <h5 class="card-title">' . $dispo['med_nom'] . ' ' . $dispo['med_prenom'] . '</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">' . $dispo['spe_nom'] . '</h6>
+                                <p class="card-text">Établissement: ' . $dispo['etab_nom'] . '<br>
+                                Adresse: ' . $dispo['etab_adresse'] . ', ' . $dispo['etab_ville'] . '</p>
+                                <p>Disponibilité: ' . $dispo['debut_periode'] . ' à ' . $dispo['fin_periode'] . ' de ' . $dispo['debut_heure'] . ' à ' . $dispo['fin_heure'] . '</p>
                                 <form method="POST" action="">
-                                    <input type="hidden" name="id_dispo" value="' . htmlspecialchars($dispo['id_dispo']) . '">
-                                    <input type="hidden" name="id_medecin" value="' . htmlspecialchars($dispo['id_medecin']) . '">
-                                    <input type="hidden" name="id_etablissement" value="' . htmlspecialchars($dispo['id_etablissement']) . '">
+                                    <input type="hidden" name="id_dispo" value="' . $dispo['id_dispo'] . '">
+                                    <input type="hidden" name="id_medecin" value="' . $dispo['id_medecin'] . '">
+                                    <input type="hidden" name="id_etablissement" value="' . $dispo['id_etablissement'] . '">
                                     <button type="submit" name="prendre_rendez_vous" class="btn btn-primary">Prendre rendez-vous</button>
                                 </form>
                             </div>

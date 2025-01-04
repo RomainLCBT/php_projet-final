@@ -30,8 +30,7 @@ if ($email_exists > 0) {
     exit;
 }
 
-$sql = "INSERT INTO Client (nom, prenom, telephone, adresse_mail, mot_de_passe)
-        VALUES (:nom, :prenom, :telephone, :email, :password)";
+$sql = "INSERT INTO Client (nom, prenom, telephone, adresse_mail, mot_de_passe) VALUES (:nom, :prenom, :telephone, :email, :password)";
 
 try {
     $stmt = $pdo->prepare($sql);

@@ -1,14 +1,12 @@
 <?php
-
 include('constantes.php');
 
-function dbConnect() {
+function dbConnect()
+{
     try {
         ##changer mysql en pgsql si t'utilise pas mysql
         $dsn = "pgsql:host=" . DB_SERVER . ";port=" . DB_PORT . ";dbname=" . DB_NAME;
-
         $pdo = new PDO($dsn, DB_USER, DB_PASSWORD);
-        
         return $pdo;
     } catch (PDOException $e) {
 
@@ -16,5 +14,3 @@ function dbConnect() {
         return false;
     }
 }
-
-?>

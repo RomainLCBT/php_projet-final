@@ -92,21 +92,21 @@ if (!isset($_SESSION['id_client'])) {
 
         $id_client = $_SESSION['id_client'];
         $sql = "
-                    SELECT 
-                        RendezVous.date, 
-                        RendezVous.heure, 
-                        RendezVous.est_passe, 
-                        Medecin.nom AS medecin_nom, 
-                        Medecin.prenom AS medecin_prenom, 
-                        Etablissement.nom AS etablissement_nom, 
-                        specialites.nom AS specialite_nom
-                    FROM RendezVous
-                    JOIN Medecin ON RendezVous.id_medecin = Medecin.id_medecin
-                    JOIN Etablissement ON RendezVous.id_etablissement = Etablissement.id_etablissement
-                    JOIN possede ON Medecin.id_medecin = possede.id_medecin
-                    JOIN specialites ON possede.id_spe = specialites.id_spe
-                    WHERE RendezVous.id_client = :id
-                    ORDER BY RendezVous.date DESC, RendezVous.heure DESC";
+                        SELECT 
+                            RendezVous.date, 
+                            RendezVous.heure, 
+                            RendezVous.est_passe, 
+                            Medecin.nom AS medecin_nom, 
+                            Medecin.prenom AS medecin_prenom, 
+                            Etablissement.nom AS etablissement_nom, 
+                            specialites.nom AS specialite_nom
+                        FROM RendezVous
+                        JOIN Medecin ON RendezVous.id_medecin = Medecin.id_medecin
+                        JOIN Etablissement ON RendezVous.id_etablissement = Etablissement.id_etablissement
+                        JOIN possede ON Medecin.id_medecin = possede.id_medecin
+                        JOIN specialites ON possede.id_spe = specialites.id_spe
+                        WHERE RendezVous.id_client = :id
+                        ORDER BY RendezVous.date DESC, RendezVous.heure DESC";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $id_client]);
 
@@ -124,22 +124,20 @@ if (!isset($_SESSION['id_client'])) {
                 $specialite = $rendezVous['specialite_nom'];
 
                 echo "
-                        <div class='card w-50 mb-3 mx-auto'>
-                            <div class='card-body '>
-                                <h5 class='card-title mb-0'>Rendez-vous avec Dr. $medecin</h5>
-                                <p class='card-text mb-0'>Établissement : $etablissement</p>
-                                <p class='card-text mb-0'>Spécialité : $specialite</p>
-                                <p class='card-text mb-0'>Date : $date</p>
-                                <p class='card-text mb-0'>Heure : $heure</p>
-                                <p class='card-text mb-0'><strong>Status :</strong> $estPasse</p>
-                            </div>
-                        </div>";
+                            <div class='card w-50 mb-3 mx-auto'>
+                                <div class='card-body '>
+                                    <h5 class='card-title mb-0'>Rendez-vous avec Dr. $medecin</h5>
+                                    <p class='card-text mb-0'>Établissement : $etablissement</p>
+                                    <p class='card-text mb-0'>Spécialité : $specialite</p>
+                                    <p class='card-text mb-0'>Date : $date</p>
+                                    <p class='card-text mb-0'>Heure : $heure</p>
+                                    <p class='card-text mb-0'><strong>Status :</strong> $estPasse</p>
+                                </div>
+                            </div>";
             }
         }
         ?>
     </div>
-
-
 </body>
 
 </html>
