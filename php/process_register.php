@@ -47,5 +47,6 @@ try {
     header("Location: ../site/rendezvous.php");
     exit;
 } catch (PDOException $e) {
+    error_log($e->getMessage());
     echo "Erreur lors de l'inscription : " . $e->getMessage();
 }

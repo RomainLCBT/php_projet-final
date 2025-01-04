@@ -42,7 +42,7 @@ if (isset($_POST['prendre_rendez_vous'])) {
     $id_client = $_SESSION['id_client'];
 
     // Récupérer la disponibilité
-    $sql = "SELECT * FROM disponibilite WHERE id_dispo = :id_dispo AND is_dispo = 1";
+    $sql = "SELECT * FROM disponibilite WHERE id_dispo = :id_dispo AND is_dispo = TRUE";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':id_dispo' => $id_dispo]);
     $dispo = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -50,7 +50,7 @@ if (isset($_POST['prendre_rendez_vous'])) {
     if ($dispo) {
         // Insérer le rendez-vous
         $sql = "INSERT INTO RendezVous (date, heure, est_passe, duree, id_client, id_medecin, id_etablissement, id_dispo)
-                VALUES (:date, :heure, 0, '01:00:00', :id_client, :id_medecin, :id_etablissement, :id_dispo)";
+                VALUES (:date, :heure, FALSE, '01:00:00', :id_client, :id_medecin, :id_etablissement, :id_dispo)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':date' => $dispo['debut_periode'],
@@ -62,7 +62,7 @@ if (isset($_POST['prendre_rendez_vous'])) {
         ]);
 
         // Marquer la disponibilité comme prise
-        $sql = "UPDATE disponibilite SET is_dispo = 0 WHERE id_dispo = :id_dispo";
+        $sql = "UPDATE disponibilite SET is_dispo = FALSE WHERE id_dispo = :id_dispo";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id_dispo' => $id_dispo]);
 
@@ -130,14 +130,14 @@ if (isset($_GET['search'])) {
             <?php
             if ($searchTerm) {
                 $sql = "SELECT m.nom AS med_nom, m.prenom AS med_prenom, m.id_medecin, e.nom AS etab_nom, e.adresse AS etab_adresse, e.Ville AS etab_ville, s.nom AS spe_nom, d.id_dispo, d.debut_periode, d.fin_periode, d.debut_heure, d.fin_heure, e.id_etablissement
-                    FROM disponibilite d
-                    JOIN requiert r ON d.id_dispo = r.id_dispo
-                    JOIN Medecin m ON r.id_medecin = m.id_medecin
-                    JOIN travail_dans td ON td.id_medecin = m.id_medecin
-                    JOIN Etablissement e ON e.id_etablissement = td.id_etablissement
-                    JOIN possede p ON p.id_medecin = m.id_medecin
-                    JOIN specialites s ON s.id_spe = p.id_spe
-                    WHERE (m.nom LIKE :searchTerm OR m.prenom LIKE :searchTerm OR s.nom LIKE :searchTerm OR e.nom LIKE :searchTerm OR e.adresse LIKE :searchTerm OR e.Ville LIKE :searchTerm) AND d.is_dispo = 1";
+        FROM disponibilite d
+        JOIN requiert r ON d.id_dispo = r.id_dispo
+        JOIN Medecin m ON r.id_medecin = m.id_medecin
+        JOIN travail_dans td ON td.id_medecin = m.id_medecin
+        JOIN Etablissement e ON e.id_etablissement = td.id_etablissement
+        JOIN possede p ON p.id_medecin = m.id_medecin
+        JOIN specialites s ON s.id_spe = p.id_spe
+        WHERE (m.nom ILIKE :searchTerm OR m.prenom ILIKE :searchTerm OR s.nom ILIKE :searchTerm OR e.nom ILIKE :searchTerm OR e.adresse ILIKE :searchTerm OR e.Ville ILIKE :searchTerm) AND d.is_dispo = TRUE";
 
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute([':searchTerm' => "%" . $searchTerm . "%"]);
