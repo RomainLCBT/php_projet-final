@@ -15,7 +15,6 @@ if (!isset($_SESSION['id_client'])) {
         $stmt->execute([':id' => $token]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user) {
-
             $_SESSION['id_client'] = $user['id_client'];
             $_SESSION['email'] = $user['adresse_mail'];
         } else {
@@ -29,14 +28,13 @@ if (!isset($_SESSION['id_client'])) {
 }
 ?>
 
-
 <!doctype html>
 <html lang="fr">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Prise de rendez Rendez Vous</title>
+    <title>Prise de rendez-vous</title>
     <link rel="stylesheet" href="../css/login.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
@@ -77,9 +75,7 @@ if (!isset($_SESSION['id_client'])) {
         <a href="prise_rendezvous.php" class="text-decoration-none">Prenez rendez-vous avec un spécialiste</a>
     </div>
 
-
     <div class="container mt-5 ">
-
 
         <h2 class="text-center mb-4">Vos Rendez-vous</h2>
         <?php
@@ -92,13 +88,14 @@ if (!isset($_SESSION['id_client'])) {
 
         $id_client = $_SESSION['id_client'];
         $sql = "
-                        SELECT 
-                            RendezVous.date, 
-                            RendezVous.heure, 
-                            RendezVous.est_passe, 
-                            Medecin.nom AS medecin_nom, 
-                            Medecin.prenom AS medecin_prenom, 
-                            Etablissement.nom AS etablissement_nom, 
+                        SELECT
+                            RendezVous.date,
+                            RendezVous.heure,
+                            RendezVous.est_passe,
+                            Medecin.nom AS medecin_nom,
+                            Medecin.prenom AS medecin_prenom,
+                            Medecin.id_medecin AS medecin_id,
+                            Etablissement.nom AS etablissement_nom,
                             specialites.nom AS specialite_nom
                         FROM RendezVous
                         JOIN Medecin ON RendezVous.id_medecin = Medecin.id_medecin
@@ -116,12 +113,13 @@ if (!isset($_SESSION['id_client'])) {
             echo "<h4 class='text-center'>Vous n'avez pas de rendez-vous.</h4>";
         } else {
             foreach ($rendezVousList as $rendezVous) {
-                $date = $rendezVous['date'];
-                $heure = $rendezVous['heure'];
+                $date = substr($rendezVous['date'], 0, -9);
+                $heure = substr($rendezVous['heure'], 0, -3);
                 $estPasse = $rendezVous['est_passe'] ? "Rendez-vous passé" : "À venir";
-                $medecin = $rendezVous['medecin_prenom'] . " " . $rendezVous['medecin_nom'];
+                $medecin = $rendezVous['medecin_nom'] . " " . $rendezVous['medecin_prenom'];
                 $etablissement = $rendezVous['etablissement_nom'];
                 $specialite = $rendezVous['specialite_nom'];
+                $medecin_id = $rendezVous['medecin_id'];
 
                 echo "
                             <div class='card w-50 mb-3 mx-auto'>
@@ -131,7 +129,10 @@ if (!isset($_SESSION['id_client'])) {
                                     <p class='card-text mb-0'>Spécialité : $specialite</p>
                                     <p class='card-text mb-0'>Date : $date</p>
                                     <p class='card-text mb-0'>Heure : $heure</p>
-                                    <p class='card-text mb-0'><strong>Status :</strong> $estPasse</p>
+                                    <div class='d-flex justify-content-between align-items-center'>
+                                        <p class='card-text mb-0'><strong>Status :</strong> $estPasse</p>
+                                        <a href='prise_rendezvous.php?id_medecin=$medecin_id' class='btn btn-primary'>Reprendre rendez-vous</a>
+                                    </div>
                                 </div>
                             </div>";
             }

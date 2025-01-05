@@ -27,7 +27,6 @@ if (!isset($_SESSION['id_client'])) {
     }
 }
 
-
 include_once('../php/database.php');
 $pdo = dbConnect();
 if (!$pdo) {
@@ -35,12 +34,10 @@ if (!$pdo) {
     exit;
 }
 
-
 if (isset($_POST['prendre_rendez_vous'])) {
     $id_dispo = $_POST['id_dispo'];
     $id_medecin = $_POST['id_medecin'];
     $id_client = $_SESSION['id_client'];
-
 
     $sql = "SELECT * FROM disponibilite WHERE id_dispo = :id_dispo AND is_dispo = TRUE";
     $stmt = $pdo->prepare($sql);
@@ -48,7 +45,6 @@ if (isset($_POST['prendre_rendez_vous'])) {
     $dispo = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($dispo) {
-
         $sql = "INSERT INTO RendezVous (date, heure, est_passe, duree, id_client, id_medecin, id_etablissement, id_dispo)
                 VALUES (:date, :heure, FALSE, '01:00:00', :id_client, :id_medecin, :id_etablissement, :id_dispo)";
         $stmt = $pdo->prepare($sql);
@@ -60,7 +56,6 @@ if (isset($_POST['prendre_rendez_vous'])) {
             ':id_etablissement' => $_POST['id_etablissement'],
             ':id_dispo' => $id_dispo
         ]);
-
 
         $sql = "UPDATE disponibilite SET is_dispo = FALSE WHERE id_dispo = :id_dispo";
         $stmt = $pdo->prepare($sql);
@@ -75,6 +70,11 @@ if (isset($_POST['prendre_rendez_vous'])) {
 $searchTerm = '';
 if (isset($_GET['search'])) {
     $searchTerm = $_GET['search'];
+}
+
+$medecinId = '';
+if (isset($_GET['id_medecin'])) {
+    $medecinId = $_GET['id_medecin'];
 }
 ?>
 
@@ -120,27 +120,41 @@ if (isset($_GET['search'])) {
         <br><br>
 
         <form method="GET" action="">
-            <div class="input-group w-50 mx-auto">
-                <input type="text" class="form-control" name="search" value="<?php echo $searchTerm; ?>" placeholder="Recherchez le nom d'un médecin, une spécialité ou un établissement">
+            <div class="input-group w-75 mx-auto">
+                <input type="text" class="form-control" name="search" value="<?php echo htmlspecialchars($searchTerm); ?>" placeholder="Recherchez le nom d'un médecin, une spécialité ou un établissement">
                 <button class="btn btn-success" type="submit">Rechercher</button>
             </div>
         </form>
 
         <div class="container mt-5">
             <?php
-            if ($searchTerm) {
+            if ($searchTerm || $medecinId) {
                 $sql = "SELECT m.nom AS med_nom, m.prenom AS med_prenom, m.id_medecin, e.nom AS etab_nom, e.adresse AS etab_adresse, e.Ville AS etab_ville, s.nom AS spe_nom, d.id_dispo, d.debut_periode, d.fin_periode, d.debut_heure, d.fin_heure, e.id_etablissement
-        FROM disponibilite d
-        JOIN requiert r ON d.id_dispo = r.id_dispo
-        JOIN Medecin m ON r.id_medecin = m.id_medecin
-        JOIN travail_dans td ON td.id_medecin = m.id_medecin
-        JOIN Etablissement e ON e.id_etablissement = td.id_etablissement
-        JOIN possede p ON p.id_medecin = m.id_medecin
-        JOIN specialites s ON s.id_spe = p.id_spe
-        WHERE (m.nom ILIKE :searchTerm OR m.prenom ILIKE :searchTerm OR s.nom ILIKE :searchTerm OR e.nom ILIKE :searchTerm OR e.adresse ILIKE :searchTerm OR e.Ville ILIKE :searchTerm) AND d.is_dispo = TRUE";
+                        FROM disponibilite d
+                        JOIN requiert r ON d.id_dispo = r.id_dispo
+                        JOIN Medecin m ON r.id_medecin = m.id_medecin
+                        JOIN travail_dans td ON td.id_medecin = m.id_medecin
+                        JOIN Etablissement e ON e.id_etablissement = td.id_etablissement
+                        JOIN possede p ON p.id_medecin = m.id_medecin
+                        JOIN specialites s ON s.id_spe = p.id_spe
+                        WHERE d.is_dispo = TRUE";
+
+                if ($searchTerm) {
+                    $sql .= " AND (m.nom ILIKE :searchTerm OR m.prenom ILIKE :searchTerm OR s.nom ILIKE :searchTerm OR e.nom ILIKE :searchTerm OR e.adresse ILIKE :searchTerm OR e.Ville ILIKE :searchTerm)";
+                }
+
+                if ($medecinId) {
+                    $sql .= " AND m.id_medecin = :medecinId";
+                }
 
                 $stmt = $pdo->prepare($sql);
-                $stmt->execute([':searchTerm' => "%" . $searchTerm . "%"]);
+                if ($searchTerm) {
+                    $stmt->bindValue(':searchTerm', "%" . $searchTerm . "%");
+                }
+                if ($medecinId) {
+                    $stmt->bindValue(':medecinId', $medecinId);
+                }
+                $stmt->execute();
                 $disponibilites = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 if ($disponibilites) {
@@ -151,7 +165,7 @@ if (isset($_GET['search'])) {
                                 <h6 class="card-subtitle mb-2 text-muted">' . $dispo['spe_nom'] . '</h6>
                                 <p class="card-text">Établissement: ' . $dispo['etab_nom'] . '<br>
                                 Adresse: ' . $dispo['etab_adresse'] . ', ' . $dispo['etab_ville'] . '</p>
-                                <p>Disponibilité: ' . $dispo['debut_periode'] . ' à ' . $dispo['fin_periode'] . ' de ' . $dispo['debut_heure'] . ' à ' . $dispo['fin_heure'] . '</p>
+                                <p>Disponibilité: Le ' . $dispo['debut_periode'] . ' de ' . substr($dispo['debut_heure'], 0, -3) . ' à ' . substr($dispo['fin_heure'], 0, -3) . '</p>
                                 <form method="POST" action="">
                                     <input type="hidden" name="id_dispo" value="' . $dispo['id_dispo'] . '">
                                     <input type="hidden" name="id_medecin" value="' . $dispo['id_medecin'] . '">
