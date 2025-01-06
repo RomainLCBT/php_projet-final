@@ -43,10 +43,10 @@ sudo -u postgres psql
 ```
 
 ### 5. Créer la base de données
-Dans le prompt PostgreSQL, créez une nouvelle base de données nommée `citations`.
+Dans le prompt PostgreSQL, créez une nouvelle base de données.
 
 ```sql
-create database citations;
+create database nom_database;
 ```
 
 ### 6. Vérifier la création de la base de données
