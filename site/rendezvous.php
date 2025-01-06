@@ -85,6 +85,21 @@ if (!isset($_SESSION['id_client'])) {
             echo "Erreur de connexion à la base de données.";
             exit;
         }
+        /*
+        Cette requête SQL récupère les rendez-vous de l'utilisateur connecté en sélectionnant plusieurs colonnes de différentes tables :
+        1. Sélection des colonnes :
+        - Informations sur le rendez-vous (date, heure, statut).
+        - Détails du médecin (nom, prénom, ID).
+        - Nom de l'établissement.
+        - Nom de la spécialité.
+        2. Jointures (JOIN) :
+        - Associe chaque rendez-vous à son médecin, établissement, et spécialité.
+        3. Condition WHERE :
+        - Filtre les rendez-vous pour ne sélectionner que ceux de l'utilisateur connecté.
+        4. Tri des résultats (ORDER BY) :
+        - Trie les rendez-vous par date et heure décroissantes pour afficher les plus récents en premier.
+        Cette requête permet d'obtenir toutes les informations nécessaires pour afficher les rendez-vous de l'utilisateur, y compris les détails du médecin, de l'établissement et de la spécialité.
+        */
 
         $id_client = $_SESSION['id_client'];
         $sql = "

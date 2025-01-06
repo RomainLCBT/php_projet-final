@@ -127,7 +127,25 @@ if (isset($_GET['id_medecin'])) {
         </form>
 
         <div class="container mt-5">
+            
             <?php
+            /*
+            Cette requête SQL récupère les disponibilités de rendez-vous en associant plusieurs tables pour obtenir des informations complètes :
+            1. Sélection des colonnes :
+            - Informations sur le médecin (nom, prénom, ID).
+            - Informations sur l'établissement (nom, adresse, ville, ID).
+            - Informations sur la spécialité (nom).
+            - Informations sur la disponibilité (ID, date de début, date de fin, heure de début, heure de fin).
+            2. Jointures (JOIN) :
+            - Associe chaque disponibilité à son médecin via la table 'requiert'.
+            - Associe chaque médecin à ses spécialités via la table 'possede'.
+            - Associe chaque médecin à son établissement via la table 'travail_dans'.
+            - Associe chaque établissement à ses médecins.
+            3. Condition WHERE :
+            - Filtre les disponibilités pour ne sélectionner que celles qui sont disponibles (is_dispo = TRUE).
+            Cette requête permet de récupérer toutes les informations nécessaires pour afficher les disponibilités de rendez-vous, y compris les détails du médecin, de l'établissement et de la spécialité.
+            */
+
             if ($searchTerm || $medecinId) {
                 $sql = "SELECT m.nom AS med_nom, m.prenom AS med_prenom, m.id_medecin, e.nom AS etab_nom, e.adresse AS etab_adresse, e.Ville AS etab_ville, s.nom AS spe_nom, d.id_dispo, d.debut_periode, d.fin_periode, d.debut_heure, d.fin_heure, e.id_etablissement
                         FROM disponibilite d

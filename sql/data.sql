@@ -281,3 +281,37 @@ VALUES
 (10, 10), -- Disponibilité 10 reliée à Hôpital J
 (1, 11), -- Disponibilité 11 reliée à Clinique A
 (2, 12); -- Disponibilité 12 reliée à Clinique B
+
+
+-- Ajouter 7 nouvelles disponibilités pour le médecin avec l'ID 1 (Paul Martin)
+INSERT INTO disponibilite (is_dispo, debut_periode, fin_periode, debut_heure, fin_heure)
+VALUES
+(TRUE, '2025-01-15', '2025-01-15', '09:00:00', '12:00:00'),
+(TRUE, '2025-02-20', '2025-02-20', '13:00:00', '16:00:00'),
+(TRUE, '2025-03-25', '2025-03-25', '08:00:00', '11:00:00'),
+(TRUE, '2025-04-30', '2025-04-30', '14:00:00', '17:00:00'),
+(TRUE, '2025-05-31', '2025-05-31', '10:00:00', '13:00:00'),
+(TRUE, '2025-06-30', '2025-06-30', '15:00:00', '18:00:00'),
+(TRUE, '2025-07-31', '2025-07-31', '09:00:00', '12:00:00');
+
+-- Mettre à jour la table requiert pour refléter les nouvelles disponibilités
+INSERT INTO requiert (id_dispo, id_medecin)
+VALUES
+(13, 1), -- Nouvelle disponibilité 1 pour Paul Martin
+(14, 1), -- Nouvelle disponibilité 2 pour Paul Martin
+(15, 1), -- Nouvelle disponibilité 3 pour Paul Martin
+(16, 1), -- Nouvelle disponibilité 4 pour Paul Martin
+(17, 1), -- Nouvelle disponibilité 5 pour Paul Martin
+(18, 1), -- Nouvelle disponibilité 6 pour Paul Martin
+(19, 1); -- Nouvelle disponibilité 7 pour Paul Martin
+
+-- Mettre à jour la table relie pour refléter les nouvelles disponibilités
+INSERT INTO relie (id_etablissement, id_dispo)
+VALUES
+(1, 13), -- Nouvelle disponibilité 1 reliée à Clinique A
+(1, 14), -- Nouvelle disponibilité 2 reliée à Clinique A
+(1, 15), -- Nouvelle disponibilité 3 reliée à Clinique A
+(1, 16), -- Nouvelle disponibilité 4 reliée à Clinique A
+(1, 17), -- Nouvelle disponibilité 5 reliée à Clinique A
+(1, 18), -- Nouvelle disponibilité 6 reliée à Clinique A
+(1, 19); -- Nouvelle disponibilité 7 reliée à Clinique A
