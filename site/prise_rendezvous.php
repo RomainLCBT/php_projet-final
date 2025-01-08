@@ -2,7 +2,6 @@
 session_start();
 if (!isset($_SESSION['id_client'])) {
     if (isset($_COOKIE['remember_token'])) {
-        echo $_COOKIE['remember_token'];
         include_once('../php/database.php');
         $pdo = dbConnect();
         if (!$pdo) {
@@ -14,7 +13,7 @@ if (!isset($_SESSION['id_client'])) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $token]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user) {
+        if ($user){
             $_SESSION['id_client'] = $user['id_client'];
             $_SESSION['email'] = $user['adresse_mail'];
         } else {
@@ -61,10 +60,9 @@ if (isset($_POST['prendre_rendez_vous'])) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id_dispo' => $id_dispo]);
 
-        echo "<div class='alert alert-success text-center'>Rendez-vous pris avec succès !</div>";
-    } else {
-        echo "<div class='alert alert-danger text-center'>La disponibilité n'est plus valide.</div>";
+
     }
+
 }
 
 $searchTerm = '';
@@ -130,7 +128,7 @@ if (isset($_GET['id_medecin'])) {
             
             <?php
             /*
-            Cette requête SQL récupère les disponibilités de rendez-vous en associant plusieurs tables pour obtenir des informations complètes :
+            Cette requête SQL récupère les disponibilités de rendez-vous en associant les tables qui interviennent dans les disponibilités des médecins:
             1. Sélection des colonnes :
             - Informations sur le médecin (nom, prénom, ID).
             - Informations sur l'établissement (nom, adresse, ville, ID).

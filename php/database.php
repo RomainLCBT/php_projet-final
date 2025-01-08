@@ -14,3 +14,5 @@ function dbConnect()
         return false;
     }
 }
+
+?>

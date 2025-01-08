@@ -14,14 +14,14 @@ if (!isset($_SESSION['id_client'])) {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $token]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user) {
+        if ($user){
             $_SESSION['id_client'] = $user['id_client'];
             $_SESSION['email'] = $user['adresse_mail'];
         } else {
             header("Location: login.php");
             exit;
         }
-    } else {
+    } else{
         header("Location: login.php");
         exit;
     }
@@ -86,7 +86,7 @@ if (!isset($_SESSION['id_client'])) {
             exit;
         }
         /*
-        Cette requête SQL récupère les rendez-vous de l'utilisateur connecté en sélectionnant plusieurs colonnes de différentes tables :
+        Cette requête SQL récupère les rendez-vous de l'utilisateur connecté en sélectionnant les tables le liant à ses rendez-vous :
         1. Sélection des colonnes :
         - Informations sur le rendez-vous (date, heure, statut).
         - Détails du médecin (nom, prénom, ID).
@@ -119,6 +119,7 @@ if (!isset($_SESSION['id_client'])) {
                         JOIN specialites ON possede.id_spe = specialites.id_spe
                         WHERE RendezVous.id_client = :id
                         ORDER BY RendezVous.date DESC, RendezVous.heure DESC";
+                        
         $stmt = $pdo->prepare($sql);
         $stmt->execute([':id' => $id_client]);
 
